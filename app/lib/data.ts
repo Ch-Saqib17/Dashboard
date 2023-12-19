@@ -41,7 +41,7 @@ export async function fetchLatestInvoices() {
       JOIN customers ON invoices.customer_id = customers.id
       ORDER BY invoices.date DESC
       LIMIT 5`;
-    noStore();
+
 
     const latestInvoices = data.rows.map((invoice) => ({
       ...invoice,
@@ -65,7 +65,7 @@ export async function fetchCardData() {
          SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
          FROM invoices`;
-    noStore();
+
 
     const data = await Promise.all([
       invoiceCountPromise,
@@ -118,7 +118,7 @@ export async function fetchFilteredInvoices(
       ORDER BY invoices.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
-    noStore();
+
 
     return invoices.rows;
   } catch (error) {
@@ -139,7 +139,7 @@ export async function fetchInvoicesPages(query: string) {
       invoices.date::text ILIKE ${`%${query}%`} OR
       invoices.status ILIKE ${`%${query}%`}
   `;
-    noStore();
+ 
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -166,7 +166,7 @@ export async function fetchInvoiceById(id: string) {
       // Convert amount from cents to dollars
       amount: invoice.amount / 100,
     }));
-    noStore();
+
     console.log(invoice);
     return invoice[0];
   } catch (error) {
@@ -184,7 +184,7 @@ export async function fetchCustomers() {
       FROM customers
       ORDER BY name ASC
     `;
-    noStore();
+   
 
     const customers = data.rows;
     return customers;
@@ -219,7 +219,7 @@ export async function fetchFilteredCustomers(query: string) {
       total_pending: formatCurrency(customer.total_pending),
       total_paid: formatCurrency(customer.total_paid),
     }));
-    noStore();
+ 
 
     return customers;
   } catch (err) {
@@ -229,7 +229,7 @@ export async function fetchFilteredCustomers(query: string) {
 }
 
 export async function getUser(email: string) {
-  noStore();
+
   try {
     const user = await sql`SELECT * FROM users WHERE email=${email}`;
     return user.rows[0] as User;
